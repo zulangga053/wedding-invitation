@@ -2,7 +2,7 @@ import type { NextRequest } from 'next/server';
 
 const PUBLIC_FILE = /\\.(.*)$/;
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   if (
     request.nextUrl.pathname.startsWith('/_next') ||
     request.nextUrl.pathname.includes('/api/') ||

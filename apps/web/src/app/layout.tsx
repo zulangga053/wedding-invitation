@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Cormorant_Garamond, Inter, Playfair_Display, Poppins } from 'next/font/google';
 import { QueryProvider } from '@/components/providers/query-provider';
+import { Toaster } from 'sonner';
 import { AuthProvider } from '@/components/providers/auth-provider';
 import './globals.css';
 
@@ -55,7 +56,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className={`${inter.variable} ${playfair.variable} ${cormorant.variable} ${poppins.variable} min-h-full font-sans`}
       >
         <QueryProvider>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            {children}
+            <Toaster richColors position="top-center" />
+          </AuthProvider>
         </QueryProvider>
       </body>
     </html>
