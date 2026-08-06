@@ -17,8 +17,10 @@ export interface TenantRepository {
   findById(id: string): Promise<Tenant | null>;
   findBySlug(slug: string): Promise<Tenant | null>;
   listForUser(uid: string): Promise<Tenant[]>;
+  listAll(limit: number): Promise<Tenant[]>;
   update(id: string, input: TenantUpdateInput): Promise<Tenant | null>;
   deactivate(id: string): Promise<Tenant | null>;
+  setStatus(id: string, status: Tenant['status']): Promise<Tenant | null>;
   addMember(tenantId: string, member: Member): Promise<void>;
 }
 
@@ -82,6 +84,15 @@ export class FirestoreTenantRepository implements TenantRepository {
     return tenants.filter((t): t is Tenant => t !== null);
   }
 
+  async listAll(limit: number): Promise<Tenant[]> {
+    const snap = await this.db
+      .collection('tenants')
+      .orderBy('createdAt', 'desc')
+      .limit(Math.min(limit, 1000))
+      .get();
+    return snap.docs.map((doc) => doc.data() as Tenant);
+  }
+
   async update(id: string, input: TenantUpdateInput): Promise<Tenant | null> {
     const ref = this.db.doc(`tenants/${id}`);
     const current = await ref.get();
@@ -104,13 +115,17 @@ export class FirestoreTenantRepository implements TenantRepository {
   }
 
   async deactivate(id: string): Promise<Tenant | null> {
+    return this.setStatus(id, 'suspended');
+  }
+
+  async setStatus(
+    id: string,
+    status: Tenant['status'],
+  ): Promise<Tenant | null> {
     const ref = this.db.doc(`tenants/${id}`);
     const current = await ref.get();
     if (!current.exists) return null;
-    await ref.update({
-      status: 'suspended',
-      updatedAt: new Date().toISOString(),
-    });
+    await ref.update({ status, updatedAt: new Date().toISOString() });
     const updated = await ref.get();
     return updated.data() as Tenant;
   }

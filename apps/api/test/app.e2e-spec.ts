@@ -34,6 +34,10 @@ describe('AppModule (e2e)', () => {
     return request(app.getHttpServer()).get('/v1/tenants').expect(401);
   });
 
+  it('GET /v1/admin/tenants without auth fails', () => {
+    return request(app.getHttpServer()).get('/v1/admin/tenants').expect(401);
+  });
+
   it('returns a consistent error envelope for unknown routes', () => {
     return request(app.getHttpServer())
       .get('/v1/nope')

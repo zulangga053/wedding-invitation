@@ -97,7 +97,7 @@ export class TenantsService {
   }
 
   async deactivate(id: string, user: AuthenticatedUser): Promise<Tenant> {
-    const updated = await this.repository.deactivate(id);
+    const updated = await this.repository.setStatus(id, 'suspended');
     if (!updated) throw new NotFoundException(`Tenant ${id} not found`);
     await this.audit.log({
       tenantId: id,
@@ -105,6 +105,16 @@ export class TenantsService {
       action: 'tenant.deactivate',
       targetId: id,
     });
+    return updated;
+  }
+
+  listAll(limit = 100): Promise<Tenant[]> {
+    return this.repository.listAll(limit);
+  }
+
+  async setStatus(id: string, status: Tenant['status']): Promise<Tenant> {
+    const updated = await this.repository.setStatus(id, status);
+    if (!updated) throw new NotFoundException(`Tenant ${id} not found`);
     return updated;
   }
 

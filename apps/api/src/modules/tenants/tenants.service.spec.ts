@@ -15,8 +15,10 @@ describe('TenantsService', () => {
       findById: jest.fn(),
       findBySlug: jest.fn(),
       listForUser: jest.fn(),
+      listAll: jest.fn(),
       update: jest.fn(),
       deactivate: jest.fn(),
+      setStatus: jest.fn(),
       addMember: jest.fn(),
     } as jest.Mocked<TenantRepository>;
 

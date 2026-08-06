@@ -9,6 +9,7 @@ import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { AuditModule } from './modules/audit/audit.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { EventsModule } from './modules/events/events.module';
+import { AdminModule } from './modules/admin/admin.module';
 import { GiftsModule } from './modules/gifts/gifts.module';
 import { GalleryModule } from './modules/gallery/gallery.module';
 import { GuestsModule } from './modules/guests/guests.module';

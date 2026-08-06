@@ -1,4 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  AUDIT_REPOSITORY,
+  type AuditRepository,
+  type AuditLog,
+} from './audit.repository';
 import { FirebaseAdminService } from '../../database/firebase-admin.service';
 
 export interface AuditEvent {
@@ -18,9 +23,12 @@ export interface AuditEvent {
 export class AuditService {
   private readonly logger = new Logger('Audit');
 
-  constructor(private readonly firebase: FirebaseAdminService) {}
+  constructor(
+    @Inject(AUDIT_REPOSITORY) private readonly repository: AuditRepository,
+    private readonly firebase: FirebaseAdminService,
+  ) {}
 
-  async log(event: AuditEvent): Promise<void> {
+  log(event: AuditEvent): Promise<void> {
     const entry = {
       tenantId: event.tenantId,
       actorUid: event.actorUid,
@@ -31,16 +39,26 @@ export class AuditService {
     };
 
     this.logger.log(
-      `${entry.actorUid} ${entry.action} ${entry.targetId ?? ''}${entry.tenantId ? ` @${entry.tenantId}` : ''}`,
+      `${entry.actorUid} ${entry.action} ${entry.targetId ?? ''}${
+        entry.tenantId ? ` @${entry.tenantId}` : ''
+      }`,
     );
 
-    if (!this.firebase.isConfigured) return;
+    if (!this.firebase.isConfigured) return Promise.resolve();
     try {
-      await this.firebase.firestore.collection('auditLogs').add(entry);
+      return this.firebase.firestore
+        .collection('auditLogs')
+        .add(entry)
+        .then(() => undefined);
     } catch (err) {
       this.logger.warn(
         `Audit write failed: ${err instanceof Error ? err.message : 'unknown'}`,
       );
+      return Promise.resolve();
     }
+  }
+
+  listAll(limit = 100): Promise<AuditLog[]> {
+    return this.repository.listAll(limit);
   }
 }
