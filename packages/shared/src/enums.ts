@@ -30,6 +30,7 @@ export const BLOCK_TYPES = [
   'hero',
   'countdown',
   'timeline',
+  'events',
   'gallery',
   'maps',
   'video',

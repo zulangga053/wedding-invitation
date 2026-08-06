@@ -80,12 +80,6 @@ export default function Home() {
           >
             Mulai Undangan Anda
           </Link>
-          <Link
-            href="/invitation/demo"
-            className="rounded-full border border-foreground/15 bg-white/60 px-8 py-4 text-base font-medium text-foreground backdrop-blur transition-colors hover:bg-white"
-          >
-            Lihat Contoh
-          </Link>
         </motion.div>
       </main>
 

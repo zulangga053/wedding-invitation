@@ -12,6 +12,7 @@ import { EventsModule } from './modules/events/events.module';
 import { GiftsModule } from './modules/gifts/gifts.module';
 import { GuestsModule } from './modules/guests/guests.module';
 import { HealthModule } from './modules/health/health.module';
+import { PublicModule } from './modules/public/public.module';
 import { RsvpModule } from './modules/rsvp/rsvp.module';
 import { SectionsModule } from './modules/sections/sections.module';
 import { TenantsModule } from './modules/tenants/tenants.module';
@@ -45,6 +46,7 @@ function firebaseEnv(): FirebaseEnv {
     WishesModule,
     GiftsModule,
     AnalyticsModule,
+    PublicModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: AuthGuard },

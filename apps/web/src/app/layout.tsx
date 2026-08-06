@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Cormorant_Garamond, Inter, Playfair_Display, Poppins } from 'next/font/google';
 import { QueryProvider } from '@/components/providers/query-provider';
+import { AuthProvider } from '@/components/providers/auth-provider';
 import './globals.css';
 
 const inter = Inter({
@@ -53,7 +54,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body
         className={`${inter.variable} ${playfair.variable} ${cormorant.variable} ${poppins.variable} min-h-full font-sans`}
       >
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );

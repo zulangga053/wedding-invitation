@@ -25,6 +25,11 @@ export class GiftsService {
     return this.repository.list(tenantId, eventId);
   }
 
+  async listPublic(slug: string): Promise<Gift[]> {
+    const { tenantId, eventId } = await this.resolver.resolve(slug);
+    return this.repository.list(tenantId, eventId);
+  }
+
   async getById(
     tenantId: string,
     eventId: string,

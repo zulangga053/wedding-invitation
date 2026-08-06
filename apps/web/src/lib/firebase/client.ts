@@ -1,4 +1,5 @@
 import { getApps, initializeApp, type FirebaseApp } from 'firebase/app';
+import { connectAuthEmulator, getAuth, type Auth } from 'firebase/auth';
 
 const config = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -17,3 +18,20 @@ export const firebaseApp: FirebaseApp | null = isConfigured
   : null;
 
 export const firebaseConfigured = isConfigured;
+
+/** Auth singleton wired to the local emulator when enabled. */
+let cachedAuth: Auth | null = null;
+export function getAuthInstance(): Auth | null {
+  if (!firebaseApp) return null;
+  if (cachedAuth) return cachedAuth;
+  const auth = getAuth(firebaseApp);
+  const useEmulator =
+    process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true' &&
+    typeof window !== 'undefined' &&
+    !(auth as unknown as { emulatorConfig?: unknown }).emulatorConfig;
+  if (useEmulator) {
+    connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
+  }
+  cachedAuth = auth;
+  return auth;
+}

@@ -153,6 +153,7 @@ export const BLOCK_DATA_SCHEMAS = {
   hero: heroBlockDataSchema,
   countdown: countdownBlockDataSchema,
   timeline: timelineBlockDataSchema,
+  events: eventsBlockDataSchema,
   gallery: galleryBlockDataSchema,
   maps: mapsBlockDataSchema,
   video: videoBlockDataSchema,

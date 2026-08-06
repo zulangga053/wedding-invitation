@@ -23,6 +23,12 @@ export class SectionsService {
     return this.repository.listForEvent(tenantId, eventId);
   }
 
+  /** Public-facing list: only enabled sections, in display order. */
+  async listEnabled(tenantId: string, eventId: string): Promise<Section[]> {
+    const sections = await this.repository.listForEvent(tenantId, eventId);
+    return sections.filter((section) => section.enabled);
+  }
+
   async create(
     _user: AuthenticatedUser,
     tenantId: string,
