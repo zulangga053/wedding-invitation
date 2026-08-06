@@ -3,10 +3,15 @@
 import { useState } from 'react';
 import type { Invitation } from '@momentia/shared';
 
+const baseUrl =
+  typeof window !== 'undefined'
+    ? window.location.origin
+    : (process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000');
+
 export function ShareBlock({ invitation }: { invitation: Invitation }) {
   const [copied, setCopied] = useState(false);
-  const url = typeof window !== 'undefined' ? window.location.href : '';
-  const text = `Undangan ` + invitation.name;
+  const url = `${baseUrl}/invitation/${invitation.slug}`;
+  const text = `Undangan ${invitation.name}`;
   const encode = (value: string) => encodeURIComponent(value);
 
   const links = [
@@ -35,7 +40,7 @@ export function ShareBlock({ invitation }: { invitation: Invitation }) {
   }
 
   return (
-    <section className="border-t border-foreground/5 px-6 py-14 text-center">
+    <section className="border-foreground/5 border-t px-6 py-14 text-center">
       <p className="text-xs font-medium uppercase tracking-[0.3em] text-[var(--inv-muted)]">
         Bagikan Undangan
       </p>
@@ -46,7 +51,7 @@ export function ShareBlock({ invitation }: { invitation: Invitation }) {
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-full border border-foreground/10 px-5 py-2.5 text-sm font-medium text-[var(--inv-text)] transition-colors hover:border-[var(--inv-primary)] hover:text-[var(--inv-primary)]"
+            className="border-foreground/10 rounded-full border px-5 py-2.5 text-sm font-medium text-[var(--inv-text)] transition-colors hover:border-[var(--inv-primary)] hover:text-[var(--inv-primary)]"
           >
             {link.label}
           </a>

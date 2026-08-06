@@ -1,0 +1,13 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e22]:
+    - banner [ref=f3e23]:
+      - generic [ref=f3e24]:
+        - link "Momentia" [ref=f3e25] [cursor=pointer]:
+          - /url: /admin
+        - generic [ref=f3e26]:
+          - generic [ref=f3e27]: test@momentia.dev
+          - button "Keluar" [ref=f3e28]
+    - main [ref=f3e29]:
+      - generic [ref=f3e30]: Memuat…
+  - region "Notifications alt+T"
+  - alert [ref=f3e21]

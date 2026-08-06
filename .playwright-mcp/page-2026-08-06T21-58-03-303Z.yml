@@ -1,0 +1,25 @@
+- generic [active] [ref=f3e1]:
+  - main [ref=f3e2]:
+    - generic [ref=f3e3]:
+      - link "Momentia" [ref=f3e4] [cursor=pointer]:
+        - /url: /
+      - heading "Masuk" [level=1] [ref=f3e5]
+      - paragraph [ref=f3e6]: Lanjutkan untuk mengelola undangan Anda.
+      - generic [ref=f3e8]:
+        - generic [ref=f3e9]:
+          - text: Email
+          - textbox "Email" [ref=f3e10]:
+            - /placeholder: nama@email.com
+        - generic [ref=f3e11]:
+          - text: Kata Sandi
+          - textbox "Kata Sandi" [ref=f3e12]:
+            - /placeholder: ••••••••
+        - button "Masuk" [ref=f3e13]
+        - generic [ref=f3e14]: atau
+        - button "Masuk dengan Google" [ref=f3e18]
+        - paragraph [ref=f3e19]:
+          - text: Belum punya akun?
+          - link "Daftar" [ref=f3e20] [cursor=pointer]:
+            - /url: /register
+  - region "Notifications alt+T"
+  - alert [ref=f3e21]

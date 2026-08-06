@@ -1,0 +1,18 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]: Momentia
+      - navigation [ref=e5]:
+        - link "Dashboard" [ref=e6] [cursor=pointer]:
+          - /url: /admin
+        - link "Masuk" [ref=e7] [cursor=pointer]:
+          - /url: /login
+    - main [ref=e8]:
+      - paragraph [ref=e9]: Undangan Digital Premium
+      - heading "Sebarkan kebahagiaan momen terbaik Anda" [level=1] [ref=e10]
+      - paragraph [ref=e11]: Buat undangan digital elegan untuk pernikahan, aqiqah, ulang tahun, dan acara lainnya — lengkap dengan RSVP, galeri, ucapan, dan analitik.
+      - link "Mulai Undangan Anda" [ref=e13] [cursor=pointer]:
+        - /url: /register
+    - contentinfo [ref=e14]: © 2026 Momentia. Undangan digital untuk setiap momen.
+  - region "Notifications alt+T"
+  - alert [ref=e15]

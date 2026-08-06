@@ -62,7 +62,11 @@ export class FirestoreGalleryRepository implements GalleryRepository {
     eventId: string,
     photo: GalleryPhoto,
   ): Promise<GalleryPhoto> {
-    await this.ref(tenantId, eventId, photo.id).set(photo);
+    // Clean up undefined values before saving to Firestore
+    const cleanPhoto = Object.fromEntries(
+      Object.entries(photo).filter(([_, value]) => value !== undefined),
+    );
+    await this.ref(tenantId, eventId, photo.id).set(cleanPhoto);
     return photo;
   }
 
@@ -74,7 +78,11 @@ export class FirestoreGalleryRepository implements GalleryRepository {
   ): Promise<GalleryPhoto | null> {
     const current = await this.findById(tenantId, eventId, photoId);
     if (!current) return null;
-    await this.ref(tenantId, eventId, photoId).update(input);
+    // Clean up undefined values from input before updating
+    const cleanInput = Object.fromEntries(
+      Object.entries(input).filter(([_, value]) => value !== undefined),
+    );
+    await this.ref(tenantId, eventId, photoId).update(cleanInput);
     return this.findById(tenantId, eventId, photoId);
   }
 

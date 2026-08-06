@@ -43,12 +43,16 @@ export class FirestoreTenantRepository implements TenantRepository {
       if (existing.exists) {
         throw new SlugTakenError(tenant.slug);
       }
+      // Clean up undefined values before saving to Firestore
+      const cleanTenant = Object.fromEntries(
+        Object.entries(tenant).filter(([_, value]) => value !== undefined),
+      );
+      tx.set(tenantRef, cleanTenant);
       tx.set(slugRef, {
         slug: tenant.slug,
         tenantId: tenant.id,
         claimedAt: tenant.createdAt,
       });
-      tx.set(tenantRef, tenant);
     });
 
     return tenant;
@@ -98,8 +102,12 @@ export class FirestoreTenantRepository implements TenantRepository {
     const current = await ref.get();
     if (!current.exists) return null;
 
+    // Clean up undefined values from input before updating
+    const cleanInput = Object.fromEntries(
+      Object.entries(input).filter(([_, value]) => value !== undefined),
+    );
     await ref.update({
-      ...input,
+      ...cleanInput,
       settings: input.settings
         ? { ...((current.data() as Tenant).settings ?? {}), ...input.settings }
         : undefined,
@@ -111,7 +119,13 @@ export class FirestoreTenantRepository implements TenantRepository {
   }
 
   async addMember(tenantId: string, member: Member): Promise<void> {
-    await this.db.doc(`tenants/${tenantId}/members/${member.uid}`).set(member);
+    // Clean up undefined values before saving to Firestore
+    const cleanMember = Object.fromEntries(
+      Object.entries(member).filter(([_, value]) => value !== undefined),
+    );
+    await this.db
+      .doc(`tenants/${tenantId}/members/${member.uid}`)
+      .set(cleanMember);
   }
 
   async deactivate(id: string): Promise<Tenant | null> {

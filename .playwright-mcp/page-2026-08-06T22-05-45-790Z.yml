@@ -1,0 +1,19 @@
+- generic [active] [ref=f11e1]:
+  - generic [ref=f11e31]:
+    - banner [ref=f11e32]:
+      - generic [ref=f11e33]:
+        - link "Momentia" [ref=f11e34] [cursor=pointer]:
+          - /url: /admin
+        - generic [ref=f11e35]:
+          - generic [ref=f11e36]: emulator@test.com
+          - button "Keluar" [ref=f11e37]
+    - main [ref=f11e38]:
+      - generic [ref=f11e39]:
+        - heading "Selamat datang di Momentia" [level=2] [ref=f11e40]
+        - paragraph [ref=f11e41]: Buat tenant dan undangan pertama Anda untuk mulai mengelola tamu, RSVP, dan statistik.
+        - link [ref=f11e42] [cursor=pointer]:
+          - /url: /admin/setup
+          - button "Buat Undangan" [ref=f11e43]
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=f11e26] [cursor=pointer]
+  - alert [ref=f11e30]

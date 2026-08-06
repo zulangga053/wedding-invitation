@@ -69,7 +69,11 @@ export class FirestoreGiftRepository implements GiftRepository {
   }
 
   async create(tenantId: string, eventId: string, gift: Gift): Promise<Gift> {
-    await this.ref(tenantId, eventId, gift.id).set(gift);
+    // Clean up undefined values before saving to Firestore
+    const cleanGift = Object.fromEntries(
+      Object.entries(gift).filter(([_, value]) => value !== undefined),
+    );
+    await this.ref(tenantId, eventId, gift.id).set(cleanGift);
     return gift;
   }
 
@@ -81,8 +85,12 @@ export class FirestoreGiftRepository implements GiftRepository {
   ): Promise<Gift | null> {
     const current = await this.findById(tenantId, eventId, giftId);
     if (!current) return null;
+    // Clean up undefined values from input before updating
+    const cleanInput = Object.fromEntries(
+      Object.entries(input).filter(([_, value]) => value !== undefined),
+    );
     await this.ref(tenantId, eventId, giftId).update({
-      ...input,
+      ...cleanInput,
       updatedAt: new Date().toISOString(),
     });
     return this.findById(tenantId, eventId, giftId);
@@ -102,9 +110,13 @@ export class FirestoreGiftRepository implements GiftRepository {
     giftId: string,
     confirmation: GiftConfirmation,
   ): Promise<GiftConfirmation> {
+    // Clean up undefined values before saving to Firestore
+    const cleanConfirmation = Object.fromEntries(
+      Object.entries(confirmation).filter(([_, value]) => value !== undefined),
+    );
     await this.confirmCol(tenantId, eventId, giftId)
       .doc(confirmation.id)
-      .set(confirmation);
+      .set(cleanConfirmation);
     return confirmation;
   }
 

@@ -18,6 +18,11 @@ export interface ApiRequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   body?: unknown;
   /**
+   * Static token string. Prefer `getAuthToken` for fresh tokens.
+   * @deprecated Use `getAuthToken` instead.
+   */
+  token?: string | null;
+  /**
    * Function that returns a Firebase ID token.
    * If provided, it will be added to the Authorization header.
    */
@@ -27,7 +32,7 @@ export interface ApiRequestOptions {
 
 /** Typed fetch wrapper for the Momentia REST API (v1). */
 export async function apiFetch<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
-  const { method = 'GET', body, getAuthToken, headers } = options;
+  const { method = 'GET', body, token, getAuthToken, headers } = options;
 
   const finalHeaders: Record<string, string> = {
     Accept: 'application/json',
@@ -35,11 +40,12 @@ export async function apiFetch<T>(path: string, options: ApiRequestOptions = {})
   };
   if (body !== undefined) finalHeaders['Content-Type'] = 'application/json';
 
+  let resolvedToken: string | null | undefined = token;
   if (getAuthToken) {
-    const token = await getAuthToken();
-    if (token) {
-      finalHeaders['Authorization'] = `Bearer ${token}`;
-    }
+    resolvedToken = await getAuthToken();
+  }
+  if (resolvedToken) {
+    finalHeaders['Authorization'] = `Bearer ${resolvedToken}`;
   }
 
   const response = await fetch(`${API_URL}${path}`, {

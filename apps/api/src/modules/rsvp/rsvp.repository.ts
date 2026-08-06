@@ -32,7 +32,11 @@ export class FirestoreRsvpRepository implements RsvpRepository {
   }
 
   async create(tenantId: string, eventId: string, rsvp: Rsvp): Promise<Rsvp> {
-    await this.col(tenantId, eventId).doc(rsvp.id).set(rsvp);
+    // Clean up undefined values before saving to Firestore
+    const cleanRsvp = Object.fromEntries(
+      Object.entries(rsvp).filter(([_, value]) => value !== undefined),
+    );
+    await this.col(tenantId, eventId).doc(rsvp.id).set(cleanRsvp);
     return rsvp;
   }
 

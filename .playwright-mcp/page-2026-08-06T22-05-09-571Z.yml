@@ -1,0 +1,26 @@
+- generic [active] [ref=f11e1]:
+  - main [ref=f11e2]:
+    - generic [ref=f11e3]:
+      - link "Momentia" [ref=f11e4] [cursor=pointer]:
+        - /url: /
+      - heading "Buat Akun" [level=1] [ref=f11e5]
+      - paragraph [ref=f11e6]: Mulai buat undangan digital Anda.
+      - generic [ref=f11e8]:
+        - generic [ref=f11e9]:
+          - text: Email
+          - textbox "Email" [ref=f11e10]:
+            - /placeholder: nama@email.com
+        - generic [ref=f11e11]:
+          - text: Kata Sandi
+          - textbox "Kata Sandi" [ref=f11e12]:
+            - /placeholder: ••••••••
+        - button "Daftar" [ref=f11e13]
+        - generic [ref=f11e14]: atau
+        - button "Masuk dengan Google" [ref=f11e18]
+        - paragraph [ref=f11e19]:
+          - text: Sudah punya akun?
+          - link "Masuk" [ref=f11e20] [cursor=pointer]:
+            - /url: /login
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=f11e26] [cursor=pointer]
+  - alert [ref=f11e30]

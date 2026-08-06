@@ -21,7 +21,15 @@
   },
   "devDependencies": {
     "prettier": "^3.5.3",
-    "prettier-plugin-tailwindcss": "^0.6.11",
-    "turbo": "^2.5.0"
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "turbo": "^2.10.8"
+  },
+  "pnpm": {
+    "allowed-scripts": {
+      "esbuild": true,
+      "protobufjs": true,
+      "@firebase/util": true,
+      "unrs-resolver": true
+    }
   }
 }

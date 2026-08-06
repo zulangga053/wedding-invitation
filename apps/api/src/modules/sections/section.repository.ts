@@ -71,7 +71,11 @@ export class FirestoreSectionRepository implements SectionRepository {
     eventId: string,
     section: Section,
   ): Promise<Section> {
-    await this.ref(tenantId, eventId, section.id).set(section);
+    // Clean up undefined values before saving to Firestore
+    const cleanSection = Object.fromEntries(
+      Object.entries(section).filter(([_, value]) => value !== undefined),
+    );
+    await this.ref(tenantId, eventId, section.id).set(cleanSection);
     return section;
   }
 
@@ -83,8 +87,12 @@ export class FirestoreSectionRepository implements SectionRepository {
   ): Promise<Section | null> {
     const current = await this.findById(tenantId, eventId, sectionId);
     if (!current) return null;
+    // Clean up undefined values from patch before updating
+    const cleanPatch = Object.fromEntries(
+      Object.entries(patch).filter(([_, value]) => value !== undefined),
+    );
     await this.ref(tenantId, eventId, sectionId).update(
-      patch as UpdateData<Section>,
+      cleanPatch as UpdateData<Section>,
     );
     const updated = await this.findById(tenantId, eventId, sectionId);
     return updated;

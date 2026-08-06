@@ -51,6 +51,11 @@ export class FirestoreEventRepository implements EventRepository {
       if (existing.exists) {
         throw new EventSlugTakenError(event.slug);
       }
+      // Clean up undefined values before saving to Firestore
+      const cleanEvent = Object.fromEntries(
+        Object.entries(event).filter(([_, value]) => value !== undefined),
+      );
+      tx.set(eventRef, cleanEvent);
       tx.set(slugRef, {
         slug: event.slug,
         eventId: event.id,
@@ -58,7 +63,6 @@ export class FirestoreEventRepository implements EventRepository {
         kind: 'event',
         claimedAt: event.createdAt,
       });
-      tx.set(eventRef, event);
     });
 
     return event;
@@ -110,7 +114,11 @@ export class FirestoreEventRepository implements EventRepository {
     const current = await ref.get();
     if (!current.exists) return null;
 
-    await ref.update({ ...input, updatedAt: new Date().toISOString() });
+    // Clean up undefined values from input before updating
+    const cleanInput = Object.fromEntries(
+      Object.entries(input).filter(([_, value]) => value !== undefined),
+    );
+    await ref.update({ ...cleanInput, updatedAt: new Date().toISOString() });
     const updated = await ref.get();
     return updated.data() as Event;
   }
