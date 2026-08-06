@@ -8,5 +8,6 @@ export * from './entities/guest';
 export * from './entities/gift';
 export * from './entities/rsvp';
 export * from './entities/wish';
+export * from './entities/gallery';
 export * from './entities/analytics';
 export * from './entities/dto';

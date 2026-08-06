@@ -136,6 +136,12 @@ export default function EventBuilderPage({
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <Link
+            href={`/admin/tenants/${tenantId}/events/${eventId}/gallery`}
+            className="text-sm font-medium text-foreground/70 hover:text-foreground"
+          >
+            Galeri
+          </Link>
           {event?.slug ? (
             <Link
               href={`/invitation/${event.slug}`}

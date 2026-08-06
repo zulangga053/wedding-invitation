@@ -10,6 +10,7 @@ import { AuditModule } from './modules/audit/audit.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { EventsModule } from './modules/events/events.module';
 import { GiftsModule } from './modules/gifts/gifts.module';
+import { GalleryModule } from './modules/gallery/gallery.module';
 import { GuestsModule } from './modules/guests/guests.module';
 import { HealthModule } from './modules/health/health.module';
 import { PublicModule } from './modules/public/public.module';
@@ -45,6 +46,7 @@ function firebaseEnv(): FirebaseEnv {
     RsvpModule,
     WishesModule,
     GiftsModule,
+    GalleryModule,
     AnalyticsModule,
     PublicModule,
   ],

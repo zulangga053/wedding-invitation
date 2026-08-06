@@ -7,10 +7,13 @@ import { HeroBlock } from './blocks/hero';
 import { CountdownBlock } from './blocks/countdown';
 import { EventsBlock } from './blocks/events';
 import { TimelineBlock } from './blocks/timeline';
+import { GalleryBlock } from './blocks/gallery';
+import { VideoBlock } from './blocks/video';
 import { RsvpBlock } from './blocks/rsvp';
 import { WishesBlock } from './blocks/wishes';
 import { GiftBlock } from './blocks/gift';
 import { ShareBlock } from './blocks/share';
+import { MusicPlayer } from './music-player';
 
 interface BlockProps {
   invitation: Invitation;
@@ -21,6 +24,8 @@ const BLOCK_MAP: Partial<Record<Section['blockType'], (props: BlockProps) => Rea
   countdown: CountdownBlock,
   events: EventsBlock,
   timeline: TimelineBlock,
+  gallery: GalleryBlock,
+  video: VideoBlock,
   rsvp: RsvpBlock,
   wishes: WishesBlock,
   gift: GiftBlock,
@@ -60,6 +65,7 @@ export function InvitationView({
             <Block key={section.id} invitation={invitation} section={section} />
           ) : null;
         })}
+      <MusicPlayer invitation={invitation} />
     </div>
   );
 }
