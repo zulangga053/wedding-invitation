@@ -137,6 +137,12 @@ export default function EventBuilderPage({
         </div>
         <div className="flex items-center gap-3">
           <Link
+            href={`/admin/tenants/${tenantId}/events/${eventId}/guests`}
+            className="text-sm font-medium text-foreground/70 hover:text-foreground"
+          >
+            Tamu
+          </Link>
+          <Link
             href={`/admin/tenants/${tenantId}/events/${eventId}/gallery`}
             className="text-sm font-medium text-foreground/70 hover:text-foreground"
           >
