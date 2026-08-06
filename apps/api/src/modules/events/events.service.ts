@@ -169,4 +169,8 @@ export class EventsService {
       targetId: eventId,
     });
   }
+
+  listPublishedSlugs(): Promise<{ slug: string; updatedAt: string }[]> {
+    return this.repository.listPublishedSlugs();
+  }
 }

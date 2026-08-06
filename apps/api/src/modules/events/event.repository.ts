@@ -16,6 +16,7 @@ export interface EventRepository {
   findById(tenantId: string, eventId: string): Promise<Event | null>;
   findBySlug(slug: string): Promise<Event | null>;
   list(tenantId: string): Promise<Event[]>;
+  listPublishedSlugs(): Promise<{ slug: string; updatedAt: string }[]>;
   update(
     tenantId: string,
     eventId: string,
@@ -87,6 +88,17 @@ export class FirestoreEventRepository implements EventRepository {
       .limit(100)
       .get();
     return snap.docs.map((doc) => doc.data() as Event);
+  }
+
+  async listPublishedSlugs(): Promise<{ slug: string; updatedAt: string }[]> {
+    const snap = await this.db
+      .collection('invitations')
+      .where('status', '==', 'published')
+      .select('slug', 'updatedAt')
+      .get();
+    return snap.docs.map(
+      (doc) => doc.data() as { slug: string; updatedAt: string },
+    );
   }
 
   async update(
