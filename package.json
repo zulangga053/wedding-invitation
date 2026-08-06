@@ -1,0 +1,27 @@
+{
+  "name": "momentia",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Momentia — Enterprise SaaS digital invitation platform",
+  "packageManager": "pnpm@11.20.0",
+  "engines": {
+    "node": ">=20.11.1",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "format": "turbo run format",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "db:emulate": "pnpm --filter @momentia/firebase emulate",
+    "db:test": "pnpm --filter @momentia/firebase test:rules"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "turbo": "^2.5.0"
+  }
+}

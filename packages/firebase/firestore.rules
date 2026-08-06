@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isPublishedInvitation() {
+      return resource != null && resource.data.status == 'published';
+    }
+
+    // ADR-003 — Firestore is a PRIVATE datastore.
+    // All writes happen through the NestJS API (service account) so that
+    // validation, rate limiting, and audit remain centralized. Clients only
+    // read the small set of public read models below.
+
+    // Materialized public invitations served to SSR/CDN (1-doc read path).
+    match /invitations/{slug} {
+      allow read: if isPublishedInvitation() || isSignedIn();
+      allow write: if false;
+    }
+
+    // Public theme catalog + subscription plans (marketing / builder).
+    match /themes/{themeId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /plans/{planId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Global feature flags (safe public booleans; server enforces semantics).
+    match /featureFlags/{flag} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Everything else: deny.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
