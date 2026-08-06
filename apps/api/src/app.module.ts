@@ -22,6 +22,15 @@ import { WishesModule } from './modules/wishes/wishes.module';
 import { SharedModule } from './shared.module';
 
 function firebaseEnv(): FirebaseEnv {
+  const isEmulator = Boolean(process.env.FIRESTORE_EMULATOR_HOST);
+
+  if (isEmulator) {
+    // For local development against the emulator, we don't need real credentials.
+    // The projectId must match the one used by the client-side emulators.
+    return { projectId: 'demo-momentia' };
+  }
+
+  // For production, load from environment variables.
   const env = loadEnv();
   return {
     projectId: env.FIREBASE_PROJECT_ID,

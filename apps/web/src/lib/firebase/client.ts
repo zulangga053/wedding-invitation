@@ -1,5 +1,6 @@
 import { getApps, initializeApp, type FirebaseApp } from 'firebase/app';
 import { connectAuthEmulator, getAuth, type Auth } from 'firebase/auth';
+import { connectFirestoreEmulator, getFirestore, type Firestore } from 'firebase/firestore';
 
 const config = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -12,7 +13,7 @@ const config = {
 
 const isConfigured = Boolean(config.apiKey && config.projectId);
 
-/** Firebase client app — null when env config is absent (dev/test without Firebase). */
+/** Firebase client app — null when env config is absent. */
 export const firebaseApp: FirebaseApp | null = isConfigured
   ? (getApps()[0] ?? initializeApp(config))
   : null;
@@ -24,14 +25,31 @@ let cachedAuth: Auth | null = null;
 export function getAuthInstance(): Auth | null {
   if (!firebaseApp) return null;
   if (cachedAuth) return cachedAuth;
+
   const auth = getAuth(firebaseApp);
-  const useEmulator =
-    process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true' &&
-    typeof window !== 'undefined' &&
-    !(auth as unknown as { emulatorConfig?: unknown }).emulatorConfig;
-  if (useEmulator) {
+
+  // In development, wire up to the local emulators
+  if (process.env.NODE_ENV === 'development') {
+    // connectAuthEmulator is idempotent, so it's safe to call this multiple times.
     connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
   }
+
   cachedAuth = auth;
   return auth;
+}
+
+/** Firestore singleton wired to the local emulator when enabled. */
+let cachedDb: Firestore | null = null;
+export function getDbInstance(): Firestore | null {
+  if (!firebaseApp) return null;
+  if (cachedDb) return cachedDb;
+
+  const db = getFirestore(firebaseApp);
+
+  if (process.env.NODE_ENV === 'development') {
+    connectFirestoreEmulator(db, '127.0.0.1', 8080);
+  }
+
+  cachedDb = db;
+  return db;
 }

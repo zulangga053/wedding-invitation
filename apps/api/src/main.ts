@@ -1,11 +1,17 @@
-import { Logger } from '@nestjs/common';
+import { Logger, LogLevel } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { loadEnv } from './config/env';
 
 async function bootstrap(): Promise<void> {
   const env = loadEnv();
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: (process.env.LOG_LEVELS?.split(',') as LogLevel[]) ?? [
+      'log',
+      'error',
+      'warn',
+    ],
+  });
 
   app.setGlobalPrefix('v1');
   app.enableCors({

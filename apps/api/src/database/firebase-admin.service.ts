@@ -56,12 +56,18 @@ export class FirebaseAdminService {
           }
         : undefined;
 
+    const isEmulator = Boolean(process.env.FIRESTORE_EMULATOR_HOST);
+
     this.app = initializeApp({
-      projectId: this.config.projectId,
+      // When using the emulator, we must use a consistent, non-production project ID.
+      // The emulator defaults to "demo-..." if no project is running, so we
+      // explicitly use it here to ensure tokens are validated against the same
+      // demo project ID that the client-side emulators will use.
+      projectId: isEmulator ? 'demo-momentia' : this.config.projectId,
       credential: serviceAccount ? cert(serviceAccount) : undefined,
     });
     this.logger.log(
-      `Firebase Admin initialized for project ${this.config.projectId}`,
+      `Firebase Admin initialized for project ${isEmulator ? 'demo-momentia (EMULATOR)' : this.config.projectId}`,
     );
     return this.app;
   }
