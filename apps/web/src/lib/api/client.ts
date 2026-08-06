@@ -17,20 +17,30 @@ export class ApiError extends Error {
 export interface ApiRequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   body?: unknown;
-  token?: string | null;
+  /**
+   * Function that returns a Firebase ID token.
+   * If provided, it will be added to the Authorization header.
+   */
+  getAuthToken?: () => Promise<string | null>;
   headers?: Record<string, string>;
 }
 
 /** Typed fetch wrapper for the Momentia REST API (v1). */
 export async function apiFetch<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
-  const { method = 'GET', body, token, headers } = options;
+  const { method = 'GET', body, getAuthToken, headers } = options;
 
   const finalHeaders: Record<string, string> = {
     Accept: 'application/json',
     ...headers,
   };
   if (body !== undefined) finalHeaders['Content-Type'] = 'application/json';
-  if (token) finalHeaders['Authorization'] = `Bearer ${token}`;
+
+  if (getAuthToken) {
+    const token = await getAuthToken();
+    if (token) {
+      finalHeaders['Authorization'] = `Bearer ${token}`;
+    }
+  }
 
   const response = await fetch(`${API_URL}${path}`, {
     method,

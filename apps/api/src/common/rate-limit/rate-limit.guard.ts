@@ -42,8 +42,10 @@ class LRUCache<K, V> {
     } else if (this.cache.size >= this.capacity) {
       // Evict the least recently used item (the first one in map iteration)
       const firstKey = this.cache.keys().next().value;
-      this.cache.delete(firstKey);
-      this.logger.warn(`Cache full, evicted key: ${String(firstKey)}`);
+      if (firstKey !== undefined) {
+        this.cache.delete(firstKey);
+        this.logger.warn(`Cache full, evicted key: ${String(firstKey)}`);
+      }
     }
     this.cache.set(key, value);
   }
