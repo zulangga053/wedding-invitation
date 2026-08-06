@@ -50,6 +50,7 @@ function firebaseEnv(): FirebaseEnv {
     GalleryModule,
     AnalyticsModule,
     PublicModule,
+    AdminModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: AuthGuard },

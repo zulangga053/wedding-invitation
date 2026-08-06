@@ -8,7 +8,7 @@ import { useAuth } from '@/components/providers/auth-provider';
 export function SuperAdminGate({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const router = useRouter();
-  const isSuper = user?.superAdmin === true;
+  const isSuper = user && 'superAdmin' in user && (user as { superAdmin?: boolean }).superAdmin === true;
 
   useEffect(() => {
     if (!loading && !isSuper) {
