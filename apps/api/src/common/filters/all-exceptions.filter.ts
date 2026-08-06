@@ -28,7 +28,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<{ url?: string }>();
+    const request = ctx.getRequest<{ url?: string; body?: unknown }>();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'Internal server error';
@@ -62,6 +62,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
       this.logger.error(
         `${request.url ?? 'unknown'} -> ${message}`,
         exception instanceof Error ? exception.stack : undefined,
+      );
+    }
+
+    if (status === 400) {
+      this.logger.warn(
+        `Bad Request (400) to ${request.url ?? 'unknown'}. Body:`,
+        request.body,
       );
     }
 

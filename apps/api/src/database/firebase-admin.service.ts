@@ -42,9 +42,9 @@ export class FirebaseAdminService {
       return existing;
     }
 
-    const isEmulator = Boolean(process.env.FIRESTORE_EMULATOR_HOST);
+    const isDevelopment = process.env.NODE_ENV === 'development';
 
-    if (isEmulator) {
+    if (isDevelopment) {
       // For local development, initialize without credentials.
       // The Admin SDK will auto-discover the running emulators.
       this.app = initializeApp({ projectId: 'demo-momentia' });
