@@ -4,4 +4,8 @@ export * from './entities/member';
 export * from './entities/event';
 export * from './entities/section';
 export * from './entities/guest';
+export * from './entities/gift';
+export * from './entities/rsvp';
+export * from './entities/wish';
+export * from './entities/analytics';
 export * from './entities/dto';

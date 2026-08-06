@@ -7,10 +7,16 @@ import type { FirebaseEnv } from './database/firebase.tokens';
 import { AuthGuard } from './common/guards/auth.guard';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { AuditModule } from './modules/audit/audit.module';
+import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { EventsModule } from './modules/events/events.module';
+import { GiftsModule } from './modules/gifts/gifts.module';
+import { GuestsModule } from './modules/guests/guests.module';
 import { HealthModule } from './modules/health/health.module';
+import { RsvpModule } from './modules/rsvp/rsvp.module';
 import { SectionsModule } from './modules/sections/sections.module';
 import { TenantsModule } from './modules/tenants/tenants.module';
+import { WishesModule } from './modules/wishes/wishes.module';
+import { SharedModule } from './shared.module';
 
 function firebaseEnv(): FirebaseEnv {
   const env = loadEnv();
@@ -28,11 +34,17 @@ function firebaseEnv(): FirebaseEnv {
       validate: (config) => loadEnv(config),
     }),
     FirebaseModule.forRoot(firebaseEnv()),
+    SharedModule,
     AuditModule,
     HealthModule,
     TenantsModule,
     EventsModule,
     SectionsModule,
+    GuestsModule,
+    RsvpModule,
+    WishesModule,
+    GiftsModule,
+    AnalyticsModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: AuthGuard },
