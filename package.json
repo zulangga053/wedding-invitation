@@ -16,7 +16,7 @@
     "test": "turbo run test",
     "format": "turbo run format",
     "clean": "turbo run clean && rm -rf node_modules",
-    "db:emulate": "pnpm --filter @momentia/firebase emulate",
+    "db:emulate": "pnpm --filter @momentia/firebase --project demo-momentia emulate",
     "db:test": "pnpm --filter @momentia/firebase test:rules"
   },
   "devDependencies": {
