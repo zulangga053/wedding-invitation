@@ -41,33 +41,42 @@ export class FirebaseAdminService {
       this.app = existing;
       return existing;
     }
-    if (!this.config.projectId) {
-      throw new Error(
-        'Firebase is not configured — set FIREBASE_PROJECT_ID (or run the emulator)',
-      );
-    }
-
-    const serviceAccount: ServiceAccount | undefined =
-      this.config.clientEmail && this.config.privateKey
-        ? {
-            projectId: this.config.projectId,
-            clientEmail: this.config.clientEmail,
-            privateKey: this.config.privateKey.replace(/\\n/g, '\n'),
-          }
-        : undefined;
 
     const isEmulator = Boolean(process.env.FIRESTORE_EMULATOR_HOST);
 
+    if (isEmulator) {
+      // For local development, initialize without credentials.
+      // The Admin SDK will auto-discover the running emulators.
+      this.app = initializeApp({ projectId: 'demo-momentia' });
+      this.logger.log(
+        'Firebase Admin initialized in EMULATOR mode for project demo-momentia',
+      );
+      return this.app;
+    }
+
+    // For production, require and use service account credentials.
+    if (
+      !this.config.projectId ||
+      !this.config.clientEmail ||
+      !this.config.privateKey
+    ) {
+      throw new Error(
+        'Firebase production credentials are not configured — set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY',
+      );
+    }
+
+    const serviceAccount: ServiceAccount = {
+      projectId: this.config.projectId,
+      clientEmail: this.config.clientEmail,
+      privateKey: this.config.privateKey.replace(/\\n/g, '\n'),
+    };
+
     this.app = initializeApp({
-      // When using the emulator, we must use a consistent, non-production project ID.
-      // The emulator defaults to "demo-..." if no project is running, so we
-      // explicitly use it here to ensure tokens are validated against the same
-      // demo project ID that the client-side emulators will use.
-      projectId: isEmulator ? 'demo-momentia' : this.config.projectId,
-      credential: serviceAccount ? cert(serviceAccount) : undefined,
+      projectId: this.config.projectId,
+      credential: cert(serviceAccount),
     });
     this.logger.log(
-      `Firebase Admin initialized for project ${isEmulator ? 'demo-momentia (EMULATOR)' : this.config.projectId}`,
+      `Firebase Admin initialized in PRODUCTION mode for project ${this.config.projectId}`,
     );
     return this.app;
   }
