@@ -112,23 +112,26 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
       - name: Build and push API image to GAR
         id: build-api
+        shell: bash
         run: |
-          pnpm turbo build --filter=@momentia/api
           gcloud auth configure-docker us-central1-docker.pkg.dev
-          docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/momentia/api:latest -f apps/api/Dockerfile .
-          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/momentia/api:latest
-          echo "image_pushed=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/momentia/api:latest" >> $GITHUB_OUTPUT
+          docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/momentia/api:${{ github.sha }} -f apps/api/Dockerfile .
+          docker tag us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/momentia/api:${{ github.sha }} us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/momentia/api:latest
+          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/momentia/api:${{ github.sha }}
+          echo "image_pushed=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/momentia/api:${{ github.sha }}" >> $GITHUB_OUTPUT
       - name: Deploy API to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: momentia-api
           region: us-central1
           image: ${{ steps.build-api.outputs.image_pushed }}
+          flags: --allow-unauthenticated --min-instances=0 --max-instances=1 --cpu=1 --memory=256Mi
           env_vars: |
             FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}
             FIREBASE_CLIENT_EMAIL=${{ secrets.FIREBASE_CLIENT_EMAIL }}
             FIREBASE_PRIVATE_KEY=${{ secrets.FIREBASE_PRIVATE_KEY }}
             REDIS_URL=${{ secrets.REDIS_URL }}
+            CORS_ORIGINS=https://${{ vars.VERCEL_PROJECT_NAME }}.vercel.app
             NODE_ENV=production
 
       # 2. Deploy Web to Vercel
@@ -137,6 +140,8 @@ jobs:
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
       - name: Build Web App
-        run: pnpm turbo build --filter=@momentia/web
+        shell: bash
+        run: |
+          cd apps/web && pnpm install --frozen-lockfile && npx next build
       - name: Deploy Web App to Vercel
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
