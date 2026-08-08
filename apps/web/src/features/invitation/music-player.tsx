@@ -34,6 +34,7 @@ export function MusicPlayer({ invitation }: { invitation: Invitation }) {
         loop={music.loop ?? true}
         preload="none"
         onEnded={() => setPlaying(false)}
+        role="audio"
       />
       <button
         type="button"

@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import type { Invitation } from '@momentia/shared';
 
@@ -31,9 +30,11 @@ export function ShareBlock({ invitation }: { invitation: Invitation }) {
 
   async function copyLink() {
     try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(url);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
+      }
     } catch {
       setCopied(false);
     }
@@ -56,13 +57,15 @@ export function ShareBlock({ invitation }: { invitation: Invitation }) {
             {link.label}
           </a>
         ))}
-        <button
-          type="button"
-          onClick={() => void copyLink()}
-          className="rounded-full bg-[var(--inv-primary)] px-5 py-2.5 text-sm font-medium text-white"
-        >
-          {copied ? 'Tersalin ✓' : 'Salin Link'}
-        </button>
+        <div className="mt-4 flex">
+          <button
+            type="button"
+            onClick={() => void copyLink()}
+            className="rounded-full bg-[var(--inv-primary)] px-5 py-2.5 text-sm font-medium text-white"
+          >
+            {copied ? 'Tersalin' : 'Salin Link'}
+          </button>
+        </div>
       </div>
     </section>
   );
