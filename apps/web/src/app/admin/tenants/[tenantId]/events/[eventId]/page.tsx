@@ -48,9 +48,7 @@ const DEFAULT_DATA: Record<string, unknown> = {
   share: {},
 };
 
-function useAuthedMutation<TData, TVariables>(
-  fn: (variables: TVariables) => Promise<TData>
-) {
+function useAuthedMutation<TData, TVariables>(fn: (variables: TVariables) => Promise<TData>) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: fn,
@@ -110,49 +108,59 @@ export default function EventBuilderPage({
     })
   );
 
-  const move = useAuthedMutation<unknown, { id: string; dir: -1 | 1 }>(
-    async ({ id, dir }) => {
-      const index = sections.findIndex((s) => s.id === id);
-      const target = index + dir;
-      if (index < 0 || target < 0 || target >= sections.length) return;
-      const next = [...sections];
-      const [item] = next.splice(index, 1);
-      next.splice(target, 0, item);
-      return authBody(`/tenants/${tenantId}/events/${eventId}/sections/reorder`, 'POST', {
-        orderedIds: next.map((s) => s.id),
-      });
-    }
-  );
+  const move = useAuthedMutation<unknown, { id: string; dir: -1 | 1 }>(async ({ id, dir }) => {
+    const index = sections.findIndex((s) => s.id === id);
+    const target = index + dir;
+    if (index < 0 || target < 0 || target >= sections.length) return;
+    const next = [...sections];
+    const [item] = next.splice(index, 1);
+    next.splice(target, 0, item);
+    return authBody(`/tenants/${tenantId}/events/${eventId}/sections/reorder`, 'POST', {
+      orderedIds: next.map((s) => s.id),
+    });
+  });
 
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-semibold text-foreground">
+          <h1 className="font-display text-foreground text-3xl font-semibold">
             {event?.name ?? 'Undangan'}
           </h1>
-          <p className="mt-1 text-sm text-foreground/50">
+          <p className="text-foreground/50 mt-1 text-sm">
             {event ? `/invitation/${event.slug}` : ''} · {event?.status}
           </p>
         </div>
         <div className="flex items-center gap-3">
           <Link
             href={`/admin/tenants/${tenantId}/events/${eventId}/guests`}
-            className="text-sm font-medium text-foreground/70 hover:text-foreground"
+            className="text-foreground/70 hover:text-foreground text-sm font-medium"
           >
             Tamu
           </Link>
           <Link
             href={`/admin/tenants/${tenantId}/events/${eventId}/gallery`}
-            className="text-sm font-medium text-foreground/70 hover:text-foreground"
+            className="text-foreground/70 hover:text-foreground text-sm font-medium"
           >
             Galeri
+          </Link>
+          <Link
+            href={`/admin/tenants/${tenantId}/events/${eventId}/rsvp`}
+            className="text-foreground/70 hover:text-foreground text-sm font-medium"
+          >
+            RSVP
+          </Link>
+          <Link
+            href={`/admin/tenants/${tenantId}/events/${eventId}/analytics`}
+            className="text-foreground/70 hover:text-foreground text-sm font-medium"
+          >
+            Analitik
           </Link>
           {event?.slug ? (
             <Link
               href={`/invitation/${event.slug}`}
               target="_blank"
-              className="text-sm font-medium text-brand-primary hover:underline"
+              className="text-brand-primary text-sm font-medium hover:underline"
             >
               Lihat undangan ↗
             </Link>
@@ -170,12 +178,12 @@ export default function EventBuilderPage({
       </div>
 
       <div>
-        <h2 className="mb-3 text-lg font-medium text-foreground">Blok Halaman</h2>
+        <h2 className="text-foreground mb-3 text-lg font-medium">Blok Halaman</h2>
         <div className="flex flex-wrap items-center gap-3">
           <select
             value={newBlock}
             onChange={(e) => setNewBlock(e.target.value)}
-            className="h-10 rounded-xl border border-foreground/15 bg-background px-3 text-sm"
+            className="border-foreground/15 bg-background h-10 rounded-xl border px-3 text-sm"
           >
             {BLOCK_TYPES.map((type) => (
               <option key={type} value={type}>
@@ -191,22 +199,22 @@ export default function EventBuilderPage({
 
       <div className="space-y-3">
         {sections.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-foreground/15 p-8 text-center text-sm text-foreground/50">
+          <p className="border-foreground/15 text-foreground/50 rounded-xl border border-dashed p-8 text-center text-sm">
             Belum ada blok. Tambahkan blok pertama Anda di atas.
           </p>
         ) : (
           sections.map((section, index) => (
             <div
               key={section.id}
-              className="flex items-center justify-between rounded-xl border border-foreground/10 bg-background px-4 py-3"
+              className="border-foreground/10 bg-background flex items-center justify-between rounded-xl border px-4 py-3"
             >
               <div className="flex items-center gap-3">
-                <span className="text-xs text-foreground/40">{index + 1}</span>
+                <span className="text-foreground/40 text-xs">{index + 1}</span>
                 <div>
-                  <p className="text-sm font-medium text-foreground">
+                  <p className="text-foreground text-sm font-medium">
                     {BLOCK_LABELS[section.blockType] ?? section.blockType}
                   </p>
-                  <p className="text-xs text-foreground/50">v{section.schemaVersion}</p>
+                  <p className="text-foreground/50 text-xs">v{section.schemaVersion}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -214,7 +222,7 @@ export default function EventBuilderPage({
                   aria-label="Naikkan"
                   disabled={index === 0}
                   onClick={() => void move.mutate({ id: section.id, dir: -1 })}
-                  className="rounded-md px-2 py-1 text-foreground/60 hover:bg-foreground/5 disabled:opacity-30"
+                  className="text-foreground/60 hover:bg-foreground/5 rounded-md px-2 py-1 disabled:opacity-30"
                 >
                   ↑
                 </button>
@@ -222,7 +230,7 @@ export default function EventBuilderPage({
                   aria-label="Turunkan"
                   disabled={index === sections.length - 1}
                   onClick={() => void move.mutate({ id: section.id, dir: 1 })}
-                  className="rounded-md px-2 py-1 text-foreground/60 hover:bg-foreground/5 disabled:opacity-30"
+                  className="text-foreground/60 hover:bg-foreground/5 rounded-md px-2 py-1 disabled:opacity-30"
                 >
                   ↓
                 </button>
