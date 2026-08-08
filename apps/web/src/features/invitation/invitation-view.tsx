@@ -13,6 +13,10 @@ import { RsvpBlock } from './blocks/rsvp';
 import { WishesBlock } from './blocks/wishes';
 import { GiftBlock } from './blocks/gift';
 import { ShareBlock } from './blocks/share';
+import { MapsBlock } from './blocks/maps';
+import { FaqBlock } from './blocks/faq';
+import { ContactBlock } from './blocks/contact';
+import { StreamBlock } from './blocks/stream';
 import { MusicPlayer } from './music-player';
 
 interface BlockProps {
@@ -20,7 +24,9 @@ interface BlockProps {
   section: Section;
 }
 
-const BLOCK_MAP: Partial<Record<Section['blockType'], (props: BlockProps) => React.ReactElement | null>> = {
+const BLOCK_MAP: Partial<
+  Record<Section['blockType'], (props: BlockProps) => React.ReactElement | null>
+> = {
   countdown: CountdownBlock,
   events: EventsBlock,
   timeline: TimelineBlock,
@@ -30,6 +36,10 @@ const BLOCK_MAP: Partial<Record<Section['blockType'], (props: BlockProps) => Rea
   wishes: WishesBlock,
   gift: GiftBlock,
   share: ShareBlock,
+  maps: MapsBlock,
+  faq: FaqBlock,
+  contact: ContactBlock,
+  stream: StreamBlock,
 };
 
 export function InvitationView({
