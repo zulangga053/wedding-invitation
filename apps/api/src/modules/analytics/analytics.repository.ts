@@ -47,9 +47,9 @@ export class FirestoreAnalyticsRepository implements AnalyticsRepository {
     return this.firebase.firestore;
   }
 
-  private dailyRef(tenantId: string, eventId: string, date: string) {
-    return this.db.doc(
-      `tenants/${tenantId}/events/${eventId}/analytics/daily/${date}`,
+  private dailyRef(tenantId: string, eventId: string) {
+    return this.db.collection(
+      `tenants/${tenantId}/events/${eventId}/analytics`
     );
   }
 
@@ -59,7 +59,7 @@ export class FirestoreAnalyticsRepository implements AnalyticsRepository {
     metric: AnalyticsMetric,
   ): Promise<void> {
     const date = todayKey();
-    await this.dailyRef(tenantId, eventId, date).set(
+    await this.dailyRef(tenantId, eventId).doc(date).set(
       { date, [metric]: FieldValue.increment(1) },
       { merge: true },
     );
@@ -68,7 +68,7 @@ export class FirestoreAnalyticsRepository implements AnalyticsRepository {
   async recordEvent(entry: AnalyticsEventEntry): Promise<void> {
     await this.db
       .collection(
-        `tenants/${entry.tenantId}/events/${entry.eventId}/analytics/events`,
+        `tenants/${entry.tenantId}/events/${entry.eventId}/analytics`
       )
       .add(entry);
   }
@@ -79,8 +79,7 @@ export class FirestoreAnalyticsRepository implements AnalyticsRepository {
     from: string,
     to: string,
   ): Promise<DailyStat[]> {
-    const snap = await this.db
-      .collection(`tenants/${tenantId}/events/${eventId}/analytics/daily`)
+    const snap = await this.dailyRef(tenantId, eventId)
       .where('date', '>=', from)
       .where('date', '<=', to)
       .orderBy('date', 'asc')

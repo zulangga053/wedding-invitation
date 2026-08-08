@@ -23,14 +23,23 @@ function split(ms: number): TimeLeft {
 function Diff({ invitation, section }: { invitation: Invitation; section: Section }) {
   const data = section.data as { title?: string; targetDate?: string };
   const target = data?.targetDate ?? invitation.mainDate;
+
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const [time, setTime] = useState<TimeLeft>(() =>
-    split(new Date(target).getTime() - Date.now())
+    split(new Date(target).getTime() - new Date().getTime())
   );
 
   useEffect(() => {
-    const id = setInterval(() => setTime(split(new Date(target).getTime() - Date.now())), 1000);
+    if (!isClient) return;
+    const id = setInterval(() => {
+      setTime(split(new Date(target).getTime() - new Date().getTime()));
+    }, 1000);
     return () => clearInterval(id);
-  }, [target]);
+  }, [target, isClient]);
 
   const units = [
     { label: 'Hari', value: time.d },
@@ -46,8 +55,11 @@ function Diff({ invitation, section }: { invitation: Invitation; section: Sectio
           key={unit.label}
           className="w-20 rounded-2xl bg-[var(--inv-surface)] py-5 text-center shadow-sm sm:w-24"
         >
-          <div className="text-3xl font-semibold tabular-nums text-[var(--inv-primary)]">
-            {String(unit.value).padStart(2, '0')}
+          <div
+            className="text-3xl font-semibold tabular-nums text-[var(--inv-primary)]"
+            suppressHydrationWarning
+          >
+            {isClient ? String(unit.value).padStart(2, '0') : '00'}
           </div>
           <div className="mt-1 text-xs uppercase tracking-widest text-[var(--inv-muted)]">
             {unit.label}
@@ -58,7 +70,13 @@ function Diff({ invitation, section }: { invitation: Invitation; section: Sectio
   );
 }
 
-export function CountdownBlock({ invitation, section }: { invitation: Invitation; section: Section }) {
+export function CountdownBlock({
+  invitation,
+  section,
+}: {
+  invitation: Invitation;
+  section: Section;
+}) {
   const data = section.data as { title?: string };
   return (
     <section className="px-6 py-20 text-center">

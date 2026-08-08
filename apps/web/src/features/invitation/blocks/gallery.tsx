@@ -6,6 +6,8 @@ import { useQuery } from '@tanstack/react-query';
 import type { GalleryPhoto, Invitation, Section } from '@momentia/shared';
 import { apiFetch } from '@/lib/api/client';
 
+import { formatGoogleDriveLink } from '@/lib/utils/format-google-drive-link';
+
 export function GalleryBlock({ invitation, section }: { invitation: Invitation; section: Section }) {
   const data = section.data as { title?: string };
   const slug = invitation.slug;
@@ -51,7 +53,7 @@ export function GalleryBlock({ invitation, section }: { invitation: Invitation; 
             aria-label={photo.caption ?? 'Buka foto'}
           >
             <Image
-              src={photo.imageUrl}
+              src={formatGoogleDriveLink(photo.imageUrl)}
               alt={photo.caption ?? 'Foto galeri'}
               width={600}
               height={800}
@@ -76,7 +78,7 @@ export function GalleryBlock({ invitation, section }: { invitation: Invitation; 
         >
           <div className="relative max-h-[85vh] max-w-4xl" onClick={(e) => e.stopPropagation()}>
             <Image
-              src={photos[active].imageUrl}
+              src={formatGoogleDriveLink(photos[active].imageUrl)}
               alt={photos[active].caption ?? 'Foto galeri'}
               width={1200}
               height={1600}
