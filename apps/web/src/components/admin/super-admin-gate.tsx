@@ -4,11 +4,11 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers/auth-provider';
 
-/** Client-side gate: requires superAdmin custom claim. */
+/** Client-side gate: requires the superAdmin custom claim. */
 export function SuperAdminGate({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+  const { loading, superAdmin } = useAuth();
   const router = useRouter();
-  const isSuper = user && 'superAdmin' in user && (user as { superAdmin?: boolean }).superAdmin === true;
+  const isSuper = superAdmin === true;
 
   useEffect(() => {
     if (!loading && !isSuper) {
@@ -18,8 +18,8 @@ export function SuperAdminGate({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand-primary border-t-transparent" />
+      <div className="bg-background flex min-h-screen items-center justify-center">
+        <div className="border-brand-primary h-8 w-8 animate-spin rounded-full border-2 border-t-transparent" />
       </div>
     );
   }

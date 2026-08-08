@@ -25,6 +25,8 @@ interface AuthContextValue {
   user: User | null;
   loading: boolean;
   authenticated: boolean;
+  /** Whether the Firebase custom claim superAdmin is set (client-side check). */
+  superAdmin: boolean;
   /** Fresh Firebase ID token for API Bearer auth. */
   getToken: () => Promise<string | null>;
   signInEmail: (email: string, password: string) => Promise<void>;
@@ -37,6 +39,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [superAdmin, setSuperAdmin] = useState(false);
   const [loading, setLoading] = useState(() => !firebaseConfigured);
 
   useEffect(() => {
@@ -46,6 +49,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, (next) => {
       setUser(next);
       setLoading(false);
+      if (next) {
+        next
+          .getIdTokenResult()
+          .then((r) => setSuperAdmin(r.claims.superAdmin === true))
+          .catch(() => setSuperAdmin(false));
+      } else {
+        setSuperAdmin(false);
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -88,13 +99,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user,
       loading,
       authenticated: Boolean(user),
+      superAdmin,
       getToken,
       signInEmail,
       signUpEmail,
       signInGoogle,
       logout,
     }),
-    [user, loading, getToken, signInEmail, signUpEmail, signInGoogle, logout]
+    [user, superAdmin, loading, getToken, signInEmail, signUpEmail, signInGoogle, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
